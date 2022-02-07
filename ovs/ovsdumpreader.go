@@ -8,8 +8,12 @@ import (
 )
 
 type OvsDumpSource interface {
-	DumpFlows(ip string, port int) ([]string, error)
-	DumpPorts(ip string, port int) ([]string, error)
+	TunDumpFlows(ip string, port int) ([]string, error)
+	TunDumpPorts(ip string, port int) ([]string, error)
+	ExDumpFlows(ip string, port int) ([]string, error)
+	ExDumpPorts(ip string, port int) ([]string, error)
+	IntDumpFlows(ip string, port int) ([]string, error)
+	IntDumpPorts(ip string, port int) ([]string, error)
 //	DumpGroups(ip string, port int) ([]string, error)
 //	DumpGroupStats(ip string, port int) ([]string, error)
 }
@@ -140,8 +144,8 @@ func parseOpenFlowGroupStatsDumpLine(line string, groupIdMap map[string]*Group) 
 	}
 }
 
-func (o OvsDumpReader) Flows(ip string, port int) ([]Flow, error) {
-	lines, err := o.dumpSource.DumpFlows(ip, port)
+func (o OvsDumpReader) TunFlows(ip string, port int) ([]Flow, error) {
+	lines, err := o.dumpSource.TunDumpFlows(ip, port)
 	//if error was occured we return
 	if err != nil {
 		return nil, err
@@ -156,8 +160,74 @@ func (o OvsDumpReader) Flows(ip string, port int) ([]Flow, error) {
 	return entrySet, nil
 }
 
-func (o OvsDumpReader) Ports(ip string, port int) ([]Port, error) {
-	lines, err := o.dumpSource.DumpPorts(ip, port)
+func (o OvsDumpReader) ExFlows(ip string, port int) ([]Flow, error) {
+	lines, err := o.dumpSource.ExDumpFlows(ip, port)
+	//if error was occured we return
+	if err != nil {
+		return nil, err
+	}
+	entrySet := make([]Flow, len(lines))
+	for i, entry := range lines {
+		flowEntry := parseOpenFlowFlowDumpLine(entry)
+		entrySet[i] = flowEntry
+	}
+	fmt.Println(entrySet)
+
+	return entrySet, nil
+}
+
+func (o OvsDumpReader) IntFlows(ip string, port int) ([]Flow, error) {
+	lines, err := o.dumpSource.IntDumpFlows(ip, port)
+	//if error was occured we return
+	if err != nil {
+		return nil, err
+	}
+	entrySet := make([]Flow, len(lines))
+	for i, entry := range lines {
+		flowEntry := parseOpenFlowFlowDumpLine(entry)
+		entrySet[i] = flowEntry
+	}
+	fmt.Println(entrySet)
+
+	return entrySet, nil
+}
+
+func (o OvsDumpReader) TunPorts(ip string, port int) ([]Port, error) {
+	lines, err := o.dumpSource.TunDumpPorts(ip, port)
+	//if error was occured we return
+	if err != nil {
+		return nil, err
+	}
+
+	entrySet := make([]Port, int(len(lines)/2))
+	for i := 0; i < len(lines); i += 2 {
+		entry := parseOpenFlowPortDumpLine(lines[i], lines[i+1])
+		entrySet[int(i/2)] = entry
+	}
+	fmt.Println(entrySet)
+
+	return entrySet, nil
+}
+
+func (o OvsDumpReader) ExPorts(ip string, port int) ([]Port, error) {
+	lines, err := o.dumpSource.ExDumpPorts(ip, port)
+	//if error was occured we return
+	if err != nil {
+		return nil, err
+	}
+
+	entrySet := make([]Port, int(len(lines)/2))
+	for i := 0; i < len(lines); i += 2 {
+		entry := parseOpenFlowPortDumpLine(lines[i], lines[i+1])
+		entrySet[int(i/2)] = entry
+	}
+	fmt.Println(entrySet)
+
+	return entrySet, nil
+}
+
+func (o OvsDumpReader) IntPorts(ip string, port int) ([]Port, error) {
+	lines, err := o.dumpSource.IntDumpPorts(ip, port)
 	//if error was occured we return
 	if err != nil {
 		return nil, err

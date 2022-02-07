@@ -24,11 +24,27 @@ func ovsCtlRun(params ...string) ([]string, error) {
 	return lines, nil
 }
 
-func (o OvsDumpSourceCLI) DumpFlows(ip string, port int) ([]string, error) {
+func (o OvsDumpSourceCLI) TunDumpFlows(ip string, port int) ([]string, error) {
+	return ovsCtlRun("dump-flows", "br-tun")
+}
+
+func (o OvsDumpSourceCLI) TunDumpPorts(ip string, port int) ([]string, error) {
+	return ovsCtlRun("dump-ports", "br-tun")
+}
+
+func (o OvsDumpSourceCLI) ExDumpFlows(ip string, port int) ([]string, error) {
+	return ovsCtlRun("dump-flows", "br-ex")
+}
+
+func (o OvsDumpSourceCLI) ExDumpPorts(ip string, port int) ([]string, error) {
+	return ovsCtlRun("dump-ports", "br-ex")
+}
+
+func (o OvsDumpSourceCLI) IntDumpFlows(ip string, port int) ([]string, error) {
 	return ovsCtlRun("dump-flows", "br-int")
 }
 
-func (o OvsDumpSourceCLI) DumpPorts(ip string, port int) ([]string, error) {
+func (o OvsDumpSourceCLI) IntDumpPorts(ip string, port int) ([]string, error) {
 	return ovsCtlRun("dump-ports", "br-int")
 }
 
