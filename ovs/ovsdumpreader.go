@@ -158,53 +158,71 @@ func (o OvsDumpReader) TunFlows(ip string, port int) ([]Flow, error) {
 		return nil, err
 	}
 	entrySet := make([]Flow, len(lines))
-	for i, entry := range lines {
-		flowEntry, err := parseOpenFlowFlowDumpLine(entry)
-		if err != nil {
-			entrySet[i] = flowEntry
+	counter := 0;
+	for i := 0; i < len(lines); i++ {
+		flowEntry, err := parseOpenFlowFlowDumpLine(lines[i])
+		if err == nil {
+			entrySet[counter] = flowEntry;
+			counter++;
 		}
 	}
-	fmt.Println(entrySet)
+	retrySet := make([]Flow, counter)
+	for i := 0; i < counter; i++ {
+		retrySet[i] = entrySet[i];
+	}
+	fmt.Println(retrySet)
 
-	return entrySet, nil
+	return retrySet, nil
 }
 
 func (o OvsDumpReader) ExFlows(ip string, port int) ([]Flow, error) {
 	lines, err := o.dumpSource.ExDumpFlows(ip, port)
 	//if error was occured we return
+
 	if err != nil {
 		return nil, err
 	}
 	entrySet := make([]Flow, len(lines))
-	for i, entry := range lines {
-		flowEntry, err := parseOpenFlowFlowDumpLine(entry)
-		if err != nil {
-			return nil, err
+	counter := 0;
+	for i := 0; i < len(lines); i++ {
+		flowEntry, err := parseOpenFlowFlowDumpLine(lines[i])
+		if err == nil {
+			entrySet[counter] = flowEntry;
+			counter++;
 		}
-		entrySet[i] = flowEntry
 	}
-	fmt.Println(entrySet)
+	retrySet := make([]Flow, counter)
+	for i := 0; i < counter; i++ {
+		retrySet[i] = entrySet[i];
+	}
+	fmt.Println(retrySet)
 
-	return entrySet, nil
+	return retrySet, nil
 }
 
 func (o OvsDumpReader) IntFlows(ip string, port int) ([]Flow, error) {
 	lines, err := o.dumpSource.IntDumpFlows(ip, port)
 	//if error was occured we return
+
 	if err != nil {
 		return nil, err
 	}
 	entrySet := make([]Flow, len(lines))
-	for i, entry := range lines {
-		flowEntry, err := parseOpenFlowFlowDumpLine(entry)
-		if err != nil {
-			return nil, err
+	counter := 0;
+	for i := 0; i < len(lines); i++ {
+		flowEntry, err := parseOpenFlowFlowDumpLine(lines[i])
+		if err == nil {
+			entrySet[counter] = flowEntry;
+			counter++;
 		}
-		entrySet[i] = flowEntry
 	}
-	fmt.Println(entrySet)
+	retrySet := make([]Flow, counter)
+	for i := 0; i < counter; i++ {
+		retrySet[i] = entrySet[i];
+	}
+	fmt.Println(retrySet)
 
-	return entrySet, nil
+	return retrySet, nil
 }
 
 func (o OvsDumpReader) TunPorts(ip string, port int) ([]Port, error) {
