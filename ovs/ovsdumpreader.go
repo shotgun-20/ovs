@@ -64,9 +64,12 @@ func parseOpenFlowFlowDumpLine(line string) (Flow, error) {
 		Action:      result["actions"],
 	}
 	if len(result) == 0 {
-		return flow, errors.New("exec: Stdout already set");
+		return flow, errors.New("exec: Stdout already empty");
 	}
-	return flow, nil
+	if result["match"] != "" && result["actions"] != "" && result["table"] != "" && result["priority"] != "" {
+		return flow, nil
+	}
+	return flow, errors.New("exec: Stdout already empty");
 }
 
 func parseOpenFlowPortDumpLine(first_line, second_line string) Port {
