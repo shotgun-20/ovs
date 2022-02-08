@@ -1,6 +1,7 @@
 package ovs
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -40,7 +41,7 @@ func getRegexpMap(match []string, names []string) map[string]string {
 	return result
 }
 
-func parseOpenFlowFlowDumpLine(line string) Flow {
+func parseOpenFlowFlowDumpLine(line string) (Flow, error) {
 	match := flowLine.FindStringSubmatch(line)
 	result := getRegexpMap(match, flowLine.SubexpNames())
 	//TODO: we need to consider if len(result) == 0 is an error or business as usual
@@ -62,7 +63,10 @@ func parseOpenFlowFlowDumpLine(line string) Flow {
 		Match:       result["match"],
 		Action:      result["actions"],
 	}
-	return flow
+	if len(result) == 0 {
+		return flow, errors.New("exec: Stdout already set");
+	}
+	return flow, nil
 }
 
 func parseOpenFlowPortDumpLine(first_line, second_line string) Port {
@@ -152,8 +156,10 @@ func (o OvsDumpReader) TunFlows(ip string, port int) ([]Flow, error) {
 	}
 	entrySet := make([]Flow, len(lines))
 	for i, entry := range lines {
-		flowEntry := parseOpenFlowFlowDumpLine(entry)
-		entrySet[i] = flowEntry
+		flowEntry, err := parseOpenFlowFlowDumpLine(entry)
+		if err != nil {
+			entrySet[i] = flowEntry
+		}
 	}
 	fmt.Println(entrySet)
 
@@ -168,7 +174,10 @@ func (o OvsDumpReader) ExFlows(ip string, port int) ([]Flow, error) {
 	}
 	entrySet := make([]Flow, len(lines))
 	for i, entry := range lines {
-		flowEntry := parseOpenFlowFlowDumpLine(entry)
+		flowEntry, err := parseOpenFlowFlowDumpLine(entry)
+		if err != nil {
+			return nil, err
+		}
 		entrySet[i] = flowEntry
 	}
 	fmt.Println(entrySet)
@@ -184,7 +193,10 @@ func (o OvsDumpReader) IntFlows(ip string, port int) ([]Flow, error) {
 	}
 	entrySet := make([]Flow, len(lines))
 	for i, entry := range lines {
-		flowEntry := parseOpenFlowFlowDumpLine(entry)
+		flowEntry, err := parseOpenFlowFlowDumpLine(entry)
+		if err != nil {
+			return nil, err
+		}
 		entrySet[i] = flowEntry
 	}
 	fmt.Println(entrySet)
