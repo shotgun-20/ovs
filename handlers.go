@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/shotgun-20/ovs"
+	"github.com/shotgun-20/ovs-exporter"
 )
 
 type OvsPromCollector struct {

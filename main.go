@@ -13,7 +13,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/shotgun-20/ovs"
+	"github.com/shotgun-20/ovs-exporter"
 )
 
 //the TCP port that this scripts listens
