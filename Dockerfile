@@ -21,8 +21,6 @@ RUN cd /root/go/src/github.com/biwwy0/ovs-exporter \
 
 FROM debian:bullseye-slim
 
-MAINTAINER "LeanNet" <info@leannet.eu>
-
 #add ovs-ofctl dependecies
 RUN apt-get update \
     && apt-get install -y libcap-ng0 libssl1.1
