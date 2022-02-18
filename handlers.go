@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/biwwy0/ovs-exporter/ovs"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/shotgun-20/ovs"
 )
 
 type OvsPromCollector struct {
-	ip     string
+	ip        string
 	port      int
 	ovsReader ovs.OvsStatReader
 }
@@ -192,36 +192,36 @@ var (
 		[]string{"port"},
 		nil)
 
-//	groupPacketsDesc = prometheus.NewDesc(
-//		"groupPackets",
-//		"The number of packet that was sent by a given group",
-//		[]string{"groupId", "groupType"},
-//		nil)
-//
-//	groupBytesDesc = prometheus.NewDesc(
-//		"groupBytes",
-//		"The number of bytes that was sent by a given group",
-//		[]string{"groupId", "groupType"},
-//		nil)
-//
-//	groupDurationDesc = prometheus.NewDesc(
-//		"groupDuration",
-//		"The number of seconds passed since the group entry was added",
-//		[]string{"groupId", "groupType"},
-//		nil)
-//
-//	groupBucketPacketsDesc = prometheus.NewDesc(
-//		"groupBucketPackets",
-//		"The number of packet that was sent by a given group bucket",
-//		[]string{"groupId", "groupType", "bucketActions"},
-//		nil)
-//
-//	groupBucketBytesDesc = prometheus.NewDesc(
-//		"groupBucketBytes",
-//		"The number of bytes that was sent by a given group bucket",
-//		[]string{"groupId", "groupType", "bucketActions"},
-//		nil)
-//
+	//	groupPacketsDesc = prometheus.NewDesc(
+	//		"groupPackets",
+	//		"The number of packet that was sent by a given group",
+	//		[]string{"groupId", "groupType"},
+	//		nil)
+	//
+	//	groupBytesDesc = prometheus.NewDesc(
+	//		"groupBytes",
+	//		"The number of bytes that was sent by a given group",
+	//		[]string{"groupId", "groupType"},
+	//		nil)
+	//
+	//	groupDurationDesc = prometheus.NewDesc(
+	//		"groupDuration",
+	//		"The number of seconds passed since the group entry was added",
+	//		[]string{"groupId", "groupType"},
+	//		nil)
+	//
+	//	groupBucketPacketsDesc = prometheus.NewDesc(
+	//		"groupBucketPackets",
+	//		"The number of packet that was sent by a given group bucket",
+	//		[]string{"groupId", "groupType", "bucketActions"},
+	//		nil)
+	//
+	//	groupBucketBytesDesc = prometheus.NewDesc(
+	//		"groupBucketBytes",
+	//		"The number of bytes that was sent by a given group bucket",
+	//		[]string{"groupId", "groupType", "bucketActions"},
+	//		nil)
+	//
 	urlParsingErrorDesc = prometheus.NewDesc(
 		"ovs_error",
 		"Error scraping target. Correct format is: http://<IP>:<Port>/metrics?target=<targetIP>",
@@ -521,59 +521,59 @@ func (c OvsPromCollector) Collect(ch chan<- prometheus.Metric) {
 			float64(entry.TxDrops),
 			entry.PortNumber)
 	}
-//	groupEntries, err := c.ovsReader.Groups(c.ip, c.port)
-//	//if error was occured we return
-//	if err != nil {
-//		ch <- prometheus.NewInvalidMetric(prometheus.NewDesc("ovs_error", "Error parsing group dump", nil, nil), err)
-//		return
-//	}
-//
-//	//Creating Prometheus compatible output for every group stat with groupId label:
-//	//	- number of packets that was forwarded by a group rule as "groupPackets" type Counter
-//	//	- number of bytes that was forwarded by a group rule as "groupBytes" type Counter
-//	//	- number of second that passed since a group rule was added as "groupPackets" type Gauge
-//	//	- number of packets that was forwarded by a bucket in a group rule as "groupBucketPackets" type Counter
-//	//	- number of bytes that was forwarded by a bucket in a group rule as "groupBucketBytes" type Counter
-//
-//	for _, entry := range groupEntries {
-//
-//		ch <- prometheus.MustNewConstMetric(
-//			groupPacketsDesc,
-//			prometheus.CounterValue,
-//			float64(entry.Packets),
-//			entry.GroupId,
-//			entry.GroupType)
-//
-//		ch <- prometheus.MustNewConstMetric(
-//			groupBytesDesc,
-//			prometheus.CounterValue,
-//			float64(entry.Bytes),
-//			entry.GroupId,
-//			entry.GroupType)
-//
-//		ch <- prometheus.MustNewConstMetric(
-//			groupDurationDesc,
-//			prometheus.CounterValue,
-//			float64(entry.Duration),
-//			entry.GroupId,
-//			entry.GroupType)
-//
-//		for _, bucket := range entry.Buckets {
-//			ch <- prometheus.MustNewConstMetric(
-//				groupBucketPacketsDesc,
-//				prometheus.CounterValue,
-//				float64(bucket.Packets),
-//				entry.GroupId,
-//				entry.GroupType,
-//				bucket.Actions)
-//
-//			ch <- prometheus.MustNewConstMetric(
-//				groupBucketBytesDesc,
-//				prometheus.CounterValue,
-//				float64(bucket.Bytes),
-//				entry.GroupId,
-//				entry.GroupType,
-//				bucket.Actions)
-//		}
-//	}
+	//	groupEntries, err := c.ovsReader.Groups(c.ip, c.port)
+	//	//if error was occured we return
+	//	if err != nil {
+	//		ch <- prometheus.NewInvalidMetric(prometheus.NewDesc("ovs_error", "Error parsing group dump", nil, nil), err)
+	//		return
+	//	}
+	//
+	//	//Creating Prometheus compatible output for every group stat with groupId label:
+	//	//	- number of packets that was forwarded by a group rule as "groupPackets" type Counter
+	//	//	- number of bytes that was forwarded by a group rule as "groupBytes" type Counter
+	//	//	- number of second that passed since a group rule was added as "groupPackets" type Gauge
+	//	//	- number of packets that was forwarded by a bucket in a group rule as "groupBucketPackets" type Counter
+	//	//	- number of bytes that was forwarded by a bucket in a group rule as "groupBucketBytes" type Counter
+	//
+	//	for _, entry := range groupEntries {
+	//
+	//		ch <- prometheus.MustNewConstMetric(
+	//			groupPacketsDesc,
+	//			prometheus.CounterValue,
+	//			float64(entry.Packets),
+	//			entry.GroupId,
+	//			entry.GroupType)
+	//
+	//		ch <- prometheus.MustNewConstMetric(
+	//			groupBytesDesc,
+	//			prometheus.CounterValue,
+	//			float64(entry.Bytes),
+	//			entry.GroupId,
+	//			entry.GroupType)
+	//
+	//		ch <- prometheus.MustNewConstMetric(
+	//			groupDurationDesc,
+	//			prometheus.CounterValue,
+	//			float64(entry.Duration),
+	//			entry.GroupId,
+	//			entry.GroupType)
+	//
+	//		for _, bucket := range entry.Buckets {
+	//			ch <- prometheus.MustNewConstMetric(
+	//				groupBucketPacketsDesc,
+	//				prometheus.CounterValue,
+	//				float64(bucket.Packets),
+	//				entry.GroupId,
+	//				entry.GroupType,
+	//				bucket.Actions)
+	//
+	//			ch <- prometheus.MustNewConstMetric(
+	//				groupBucketBytesDesc,
+	//				prometheus.CounterValue,
+	//				float64(bucket.Bytes),
+	//				entry.GroupId,
+	//				entry.GroupType,
+	//				bucket.Actions)
+	//		}
+	//	}
 }

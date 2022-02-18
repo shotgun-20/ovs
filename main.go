@@ -11,9 +11,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/biwwy0/ovs-exporter/ovs"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/shotgun-20/ovs"
 )
 
 //the TCP port that this scripts listens
@@ -24,7 +24,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if target == "" {
 		target = "127.0.0.1"
 	}
-	
+
 	c := OvsPromCollector{
 		ip:        target,
 		port:      ovs.OvsDefaultPort,
