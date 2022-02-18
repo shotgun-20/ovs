@@ -15,8 +15,8 @@ type OvsDumpSource interface {
 	ExDumpPorts(ip string, port int) ([]string, error)
 	IntDumpFlows(ip string, port int) ([]string, error)
 	IntDumpPorts(ip string, port int) ([]string, error)
-//	DumpGroups(ip string, port int) ([]string, error)
-//	DumpGroupStats(ip string, port int) ([]string, error)
+	//	DumpGroups(ip string, port int) ([]string, error)
+	//	DumpGroupStats(ip string, port int) ([]string, error)
 }
 
 type OvsDumpReader struct {
@@ -52,24 +52,24 @@ func parseOpenFlowFlowDumpLine(line string) (Flow, error) {
 	hardage, _ := strconv.Atoi(result["hard_age"])
 
 	flow := Flow{
-		Cookie:      result["cookie"],
-		Duration:    duration,
-		Table:       result["table"],
-		Packets:     packets,
-		Bytes:       bytes,
-		IdleAge:	 idleage,
-		HardAge:	 hardage,
-		Priority:    result["priority"],
-		Match:       result["match"],
-		Action:      result["actions"],
+		Cookie:   result["cookie"],
+		Duration: duration,
+		Table:    result["table"],
+		Packets:  packets,
+		Bytes:    bytes,
+		IdleAge:  idleage,
+		HardAge:  hardage,
+		Priority: result["priority"],
+		Match:    result["match"],
+		Action:   result["actions"],
 	}
 	if len(result) == 0 {
-		return flow, errors.New("exec: Stdout already empty");
+		return flow, errors.New("exec: Stdout already empty")
 	}
 	if result["match"] != "" && result["actions"] != "" && result["table"] != "" && result["priority"] != "" {
 		return flow, nil
 	}
-	return flow, errors.New("exec: Stdout already empty");
+	return flow, errors.New("exec: Stdout already empty")
 }
 
 func parseOpenFlowPortDumpLine(first_line, second_line string) (Port, error) {
@@ -102,12 +102,12 @@ func parseOpenFlowPortDumpLine(first_line, second_line string) (Port, error) {
 	}
 
 	if len(result) == 0 {
-		return port, errors.New("exec: Stdout already empty");
+		return port, errors.New("exec: Stdout already empty")
 	}
 	if result["port"] != "" {
 		return port, nil
 	}
-	return port, errors.New("exec: Stdout already empty");
+	return port, errors.New("exec: Stdout already empty")
 }
 
 func parseOpenFlowGroupsDumpLine(line string) Group {
@@ -164,18 +164,18 @@ func (o OvsDumpReader) TunFlows(ip string, port int) ([]Flow, error) {
 	if err != nil {
 		return nil, err
 	}
-	entrySet := make([]Flow, len(lines))
-	counter := 0;
-	for i := 0; i < len(lines); i++ {
+	entrySet := make([]Flow, len(lines)/2*2)
+	counter := 0
+	for i := 0; i < len(lines)/2*2; i++ {
 		flowEntry, err := parseOpenFlowFlowDumpLine(lines[i])
 		if err == nil {
-			entrySet[counter] = flowEntry;
-			counter++;
+			entrySet[counter] = flowEntry
+			counter++
 		}
 	}
 	retrySet := make([]Flow, counter)
 	for i := 0; i < counter; i++ {
-		retrySet[i] = entrySet[i];
+		retrySet[i] = entrySet[i]
 	}
 	fmt.Println(retrySet)
 
@@ -189,18 +189,18 @@ func (o OvsDumpReader) ExFlows(ip string, port int) ([]Flow, error) {
 	if err != nil {
 		return nil, err
 	}
-	entrySet := make([]Flow, len(lines))
-	counter := 0;
-	for i := 0; i < len(lines); i++ {
+	entrySet := make([]Flow, len(lines)/2*2)
+	counter := 0
+	for i := 0; i < len(lines)/2*2; i++ {
 		flowEntry, err := parseOpenFlowFlowDumpLine(lines[i])
 		if err == nil {
-			entrySet[counter] = flowEntry;
-			counter++;
+			entrySet[counter] = flowEntry
+			counter++
 		}
 	}
 	retrySet := make([]Flow, counter)
 	for i := 0; i < counter; i++ {
-		retrySet[i] = entrySet[i];
+		retrySet[i] = entrySet[i]
 	}
 	fmt.Println(retrySet)
 
@@ -214,20 +214,20 @@ func (o OvsDumpReader) IntFlows(ip string, port int) ([]Flow, error) {
 	if err != nil {
 		return nil, err
 	}
-	entrySet := make([]Flow, len(lines))
-	counter := 0;
-	for i := 0; i < len(lines); i++ {
+	entrySet := make([]Flow, len(lines)/2*2)
+	counter := 0
+	for i := 0; i < len(lines)/2*2; i++ {
 		flowEntry, err := parseOpenFlowFlowDumpLine(lines[i])
 		if err == nil {
-			entrySet[counter] = flowEntry;
-			counter++;
+			entrySet[counter] = flowEntry
+			counter++
 		}
 	}
 	retrySet := make([]Flow, counter)
 	for i := 0; i < counter; i++ {
 		if err == nil {
-		retrySet[i] = entrySet[i];
-	}
+			retrySet[i] = entrySet[i]
+		}
 	}
 	fmt.Println(retrySet)
 
@@ -242,11 +242,11 @@ func (o OvsDumpReader) TunPorts(ip string, port int) ([]Port, error) {
 	}
 
 	entrySet := make([]Port, int(len(lines)/2))
-	for i := 0; i < len(lines); i += 2 {
+	for i := 0; i < len(lines)/2*2; i += 2 {
 		entry, err := parseOpenFlowPortDumpLine(lines[i], lines[i+1])
 		if err == nil {
-		entrySet[int(i/2)] = entry
-	}
+			entrySet[int(i/2)] = entry
+		}
 	}
 	fmt.Println(entrySet)
 
@@ -261,19 +261,19 @@ func (o OvsDumpReader) ExPorts(ip string, port int) ([]Port, error) {
 	}
 
 	entrySet := make([]Port, int(len(lines)/2))
-	counter := 0;
-	for i := 0; i < len(lines); i+=2 {
+	counter := 0
+	for i := 0; i < len(lines)/2*2; i += 2 {
 		flowEntry, err := parseOpenFlowPortDumpLine(lines[i], lines[i+1])
 		if err == nil {
-			entrySet[counter] = flowEntry;
-			counter++;
+			entrySet[counter] = flowEntry
+			counter++
 		}
 	}
 	retrySet := make([]Port, counter)
 	for i := 0; i < counter; i++ {
 		if err == nil {
-		retrySet[i] = entrySet[i];
-	}
+			retrySet[i] = entrySet[i]
+		}
 	}
 	fmt.Println(retrySet)
 
@@ -287,20 +287,18 @@ func (o OvsDumpReader) IntPorts(ip string, port int) ([]Port, error) {
 		return nil, err
 	}
 
-	entrySet := make([]Port, int(len(lines)/2));
-	counter := 0;
-	for i := 0; i < len(lines); i += 2 {
-		if i+1 < len(lines) {
-			entry, err := parseOpenFlowPortDumpLine(lines[i], lines[i+1])
-			if err == nil {
-				entrySet[counter] = entry;
-				counter++;
-			}
+	entrySet := make([]Port, int(len(lines)/2*2))
+	counter := 0
+	for i := 0; i < len(lines)/2*2; i += 2 {
+		entry, err := parseOpenFlowPortDumpLine(lines[i], lines[i+1])
+		if err == nil {
+			entrySet[counter] = entry
+			counter++
 		}
 	}
 	retrySet := make([]Port, counter)
 	for i := 0; i < counter; i++ {
-		retrySet[i] = entrySet[i];
+		retrySet[i] = entrySet[i]
 	}
 	fmt.Println(retrySet)
 
