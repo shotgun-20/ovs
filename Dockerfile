@@ -1,11 +1,11 @@
-FROM alpine:3.15 as ovsbuild
+FROM debian:bullseye-slim as ovsbuild
 
 # Install openvswitch to get the ovs-ofctl binary
-RUN apk add --update --no-cache openvswitch
+RUN apt-get update && apt-get install -y openvswitch-common
 
-FROM golang:1.17-alpine3.15 as gobuild
+FROM golang:1.17-bullseye as gobuild
 
-RUN apk add --update --no-cache git
+RUN apt-get update && apt-get install -y git
 
 #add the working directory
 ADD . /root/go/src/github.com/biwwy0/ovs-exporter
@@ -19,12 +19,13 @@ RUN cd /root/go/src/github.com/biwwy0/ovs-exporter \
     && go get -d \
     && go build .
 
-FROM alpine:3.15
+FROM debian:bullseye-slim
 
 MAINTAINER "LeanNet" <info@leannet.eu>
 
 #add ovs-ofctl dependecies
-RUN apk add --update --no-cache libcap-ng libssl1.1
+RUN apt-get update \
+    && apt-get install -y libcap-ng0 libssl1.1
 
 #copy the ovs-ofctl binary
 COPY --from=ovsbuild /usr/bin/ovs-ofctl /usr/bin/ovs-ofctl
